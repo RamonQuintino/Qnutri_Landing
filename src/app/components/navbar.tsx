@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Phone } from "lucide-react";
-import logo from "figma:asset/51015f58dd581c3fb51a795fff6ae5fbcd4b8925.png";
+import logo from "../../assets/51015f58dd581c3fb51a795fff6ae5fbcd4b8925.png";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);

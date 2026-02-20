@@ -1,5 +1,5 @@
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from "lucide-react";
-import logo from "figma:asset/51015f58dd581c3fb51a795fff6ae5fbcd4b8925.png";
+import logo from "../../assets/51015f58dd581c3fb51a795fff6ae5fbcd4b8925.png";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();

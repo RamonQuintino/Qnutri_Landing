@@ -1,4 +1,4 @@
-import image_f73401bcbce80745b44984a2dca0e909865cfd20 from 'figma:asset/f73401bcbce80745b44984a2dca0e909865cfd20.png'
+import image_f73401bcbce80745b44984a2dca0e909865cfd20 from '../../assets/f73401bcbce80745b44984a2dca0e909865cfd20.png'
 import { Award, Shield, Users } from "lucide-react";
 
 export function AboutSection() {
