@@ -1,7 +1,7 @@
 
-  # Landing page para cozinha industrial (cópia)
+  # Landing page
 
-  This is a code bundle for Landing page para cozinha industrial (cópia). The original project is available at https://www.figma.com/design/54xNdV8Do1sb4JdGQljdUF/Landing-page-para-cozinha-industrial--c%C3%B3pia-.
+
 
   ## Running the code
 
