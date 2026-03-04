@@ -1,50 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landing page para cozinha industrial</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
+    .container { max-width: 800px; margin: 50px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, textarea, button { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; }
+    button { background-color: #9B1B30; color: white; border: none; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .success { background-color: #d4edda; color: #155724; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #c3e6cb; }
+  </style>
+</head>
+<body>
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Landing page para cozinha industrial (cópia)</title>
-    </head>
+  <div class="container">
+    <h1>Solicite um orçamento</h1>
+    <form id="contactForm">
+      <input type="text" name="name" placeholder="Nome completo *" required />
+      <input type="text" name="company" placeholder="Empresa *" required />
+      <input type="tel" name="phone" placeholder="Telefone *" required />
+      <input type="email" name="email" placeholder="Email *" required />
+      <textarea name="message" rows="4" placeholder="Mensagem"></textarea>
+      <div id="formMessage" class="success" style="display:none;"></div>
+      <button type="submit">Enviar Solicitação</button>
+    </form>
+  </div>
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-<script>
-const form = document.getElementById("contactForm");
+  <script>
+    const form = document.getElementById("contactForm");
+    const formMessage = document.getElementById("formMessage");
 
-form.addEventListener("submit", async function(e) {
-  e.preventDefault(); // impede reload da página
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-  const formData = {
-    name: form.name.value,
-    company: form.company.value,
-    phone: form.phone.value,
-    email: form.email.value,
-    message: form.message.value
-  };
+      const submitButton = form.querySelector("button");
+      submitButton.disabled = true;
+      formMessage.style.display = "none";
 
-  try {
-    const res = await fetch("/api/sendEmail", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
+      const formData = {
+        name: form.name.value,
+        company: form.company.value,
+        phone: form.phone.value,
+        email: form.email.value,
+        message: form.message.value
+      };
+
+      try {
+        const res = await fetch("/api/sendEmail", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          formMessage.textContent = "Obrigado! Entraremos em contato em breve.";
+          formMessage.style.display = "block";
+          form.reset();
+        } else {
+          formMessage.textContent = "Erro ao enviar o formulário. Tente novamente.";
+          formMessage.style.display = "block";
+        }
+      } catch (err) {
+        console.error(err);
+        formMessage.textContent = "Erro ao enviar o formulário. Tente novamente.";
+        formMessage.style.display = "block";
+      } finally {
+        submitButton.disabled = false;
+        setTimeout(() => { formMessage.style.display = "none"; }, 5000);
+      }
     });
+  </script>
 
-    const data = await res.json();
-
-    if (data.success) {
-      alert("Email enviado com sucesso!");
-      form.reset(); // limpa o formulário
-    } else {
-      alert("Erro ao enviar email. Tente novamente.");
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Erro ao enviar email. Tente novamente.");
-  }
-});
-</script>
-    </body>
-  </html>
-  
+</body>
+</html>
