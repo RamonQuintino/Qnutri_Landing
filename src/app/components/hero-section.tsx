@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import heroImage from "figma:asset/d825605d5bea801aa266a37b64348aad96990daa.png";
+import heroImage from "../../assets/d825605d5bea801aa266a37b64348aad96990daa.png";
 
 export function HeroSection() {
   const scrollToContact = () => {
