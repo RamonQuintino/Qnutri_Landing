@@ -1,20 +1,20 @@
-import { useEffect, useRef } from "react";
-import a2bLogo from "../../assets/2990f62f39d42a9624aa395d3af1789fd49226e9.png";
-import inbrandsLogo from "../../assets/2c12a1fb3afad1a871c9b9253fa692db44f336d0.png";
-import petfiveLogo from "../../assets/10f05d7b616d1df9f49c53bbb3ba48bf05d6991d.png";
-import kosangasLogo from "../../assets/a022b2c281b4d67ac100f0cf5bf0ce1269a33d58.png";
-import grupoAcosLogo from "../../assets/436b78eb66497afc803cb4af7885df7d5305434f.png";
-import lightLogo from "../../assets/084665fdbc2fbcad3d50511ec8d715e162fbe78e.png";
-import trigoLogo from "../../assets/558d8491364c423706c0a54367e64b2fdceb845d.png";
-import knaufLogo from "../../assets/fb3dd30b3404607551b9d891b029e061f46f06e4.png";
-import ambevLogo from "../../assets/99a77efe92d1bf4801e52584c4ee95b1a946af24.png";
-import mitsubishiLogo from "../../assets/0c1777701718f4698d3b4b8101aaf5f97c151bfa.png";
-import casaVideoLogo from "../../assets/064d0bb5ef5d9fd03417a7fb1f1835da3c41bc6b.png";
-import accoLogo from "../../assets/58454a540144ce4bf08fba08dc5cb9e1fc1c6615.png";
-import acsoLogo from "../../assets/22b8987d97eccd79ebe798add49f373cc54cd9e2.png";
-import piraqueLogo from "../../assets/e64580922fdaa49be6b46df46e070a2463f890a6.png";
-import copaEnergiaLogo from "../../assets/d5ed7a4acf0bc21552c1109b4e61d4a6f5a0323b.png";
-import torcLogo from "../../assets/ec33c6df3d49baa22914a8d09b6c3cdc5a2ea07c.png";
+import { useEffect, useRef, useCallback } from "react";
+import a2bLogo from "figma:asset/2990f62f39d42a9624aa395d3af1789fd49226e9.png";
+import inbrandsLogo from "figma:asset/2c12a1fb3afad1a871c9b9253fa692db44f336d0.png";
+import petfiveLogo from "figma:asset/10f05d7b616d1df9f49c53bbb3ba48bf05d6991d.png";
+import kosangasLogo from "figma:asset/a022b2c281b4d67ac100f0cf5bf0ce1269a33d58.png";
+import grupoAcosLogo from "figma:asset/436b78eb66497afc803cb4af7885df7d5305434f.png";
+import lightLogo from "figma:asset/084665fdbc2fbcad3d50511ec8d715e162fbe78e.png";
+import trigoLogo from "figma:asset/558d8491364c423706c0a54367e64b2fdceb845d.png";
+import knaufLogo from "figma:asset/fb3dd30b3404607551b9d891b029e061f46f06e4.png";
+import ambevLogo from "figma:asset/99a77efe92d1bf4801e52584c4ee95b1a946af24.png";
+import mitsubishiLogo from "figma:asset/0c1777701718f4698d3b4b8101aaf5f97c151bfa.png";
+import casaVideoLogo from "figma:asset/064d0bb5ef5d9fd03417a7fb1f1835da3c41bc6b.png";
+import accoLogo from "figma:asset/58454a540144ce4bf08fba08dc5cb9e1fc1c6615.png";
+import acsoLogo from "figma:asset/22b8987d97eccd79ebe798add49f373cc54cd9e2.png";
+import piraqueLogo from "figma:asset/e64580922fdaa49be6b46df46e070a2463f890a6.png";
+import copaEnergiaLogo from "figma:asset/d5ed7a4acf0bc21552c1109b4e61d4a6f5a0323b.png";
+import torcLogo from "figma:asset/ec33c6df3d49baa22914a8d09b6c3cdc5a2ea07c.png";
 
 export function PartnersSection() {
   const partners = [
@@ -37,29 +37,62 @@ export function PartnersSection() {
   ];
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollPosRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollStartRef = useRef(0);
+  const autoScrollPausedRef = useRef(false);
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
     if (!scrollContainer) return;
 
     let animationId: number;
-    let scrollPos = 0;
     const speed = 0.5;
 
     const scroll = () => {
-      if (scrollContainer) {
-        scrollPos += speed;
+      if (scrollContainer && !autoScrollPausedRef.current) {
+        scrollPosRef.current += speed;
         const halfScroll = scrollContainer.scrollWidth / 2;
-        if (scrollPos >= halfScroll) {
-          scrollPos = 0;
+        if (scrollPosRef.current >= halfScroll) {
+          scrollPosRef.current = 0;
         }
-        scrollContainer.scrollLeft = scrollPos;
+        scrollContainer.scrollLeft = scrollPosRef.current;
       }
       animationId = requestAnimationFrame(scroll);
     };
 
     animationId = requestAnimationFrame(scroll);
     return () => cancelAnimationFrame(animationId);
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    isDraggingRef.current = true;
+    autoScrollPausedRef.current = true;
+    startXRef.current = e.touches[0].clientX;
+    scrollStartRef.current = scrollPosRef.current;
+    if (resumeTimeoutRef.current) {
+      clearTimeout(resumeTimeoutRef.current);
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDraggingRef.current || !scrollRef.current) return;
+    const diff = startXRef.current - e.touches[0].clientX;
+    let newPos = scrollStartRef.current + diff;
+    const halfScroll = scrollRef.current.scrollWidth / 2;
+    if (newPos < 0) newPos = halfScroll + newPos;
+    if (newPos >= halfScroll) newPos = newPos - halfScroll;
+    scrollPosRef.current = newPos;
+    scrollRef.current.scrollLeft = newPos;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    isDraggingRef.current = false;
+    resumeTimeoutRef.current = setTimeout(() => {
+      autoScrollPausedRef.current = false;
+    }, 2000);
   }, []);
 
   // Duplicate partners for seamless loop
@@ -84,13 +117,16 @@ export function PartnersSection() {
           className="relative mb-12 overflow-hidden"
         >
           {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#ffc022] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#ffc022] to-transparent z-10 pointer-events-none" />
 
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-hidden"
+            className="flex gap-6 overflow-hidden touch-pan-x"
             style={{ scrollBehavior: 'auto' }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
             {duplicatedPartners.map((partner, index) => (
               <div

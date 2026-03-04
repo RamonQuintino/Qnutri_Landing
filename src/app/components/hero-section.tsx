@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import heroImage from "../../assets/d825605d5bea801aa266a37b64348aad96990daa.png";
+import heroImage from "figma:asset/d825605d5bea801aa266a37b64348aad96990daa.png";
 
 export function HeroSection() {
   const scrollToContact = () => {
@@ -69,7 +69,7 @@ export function HeroSection() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-        <ChevronDown className="w-8 h-8 text-white" />
+        
       </div>
     </section>
   );
