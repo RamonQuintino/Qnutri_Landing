@@ -13,31 +13,37 @@ export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulação de envio
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitMessage("Obrigado! Entraremos em contato em breve.");
-      setFormData({
-        name: "",
-        company: "",
-        phone: "",
-        email: "",
-        message: ""
+    setSubmitMessage("");
+
+    try {
+      const res = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
       });
-      
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSubmitMessage("Obrigado! Entraremos em contato em breve.");
+        setFormData({ name: "", company: "", phone: "", email: "", message: "" });
+      } else {
+        setSubmitMessage("Erro ao enviar o formulário. Tente novamente.");
+      }
+    } catch (err) {
+      console.error(err);
+      setSubmitMessage("Erro ao enviar o formulário. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
       setTimeout(() => setSubmitMessage(""), 5000);
-    }, 1500);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -85,13 +91,12 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Endereço</h3>
-                  <p className="text-gray-400">Estrada Lambari, 1980<br />Primeiro, Piraí - RJ<br />27175-000</p>
+                  <p className="text-gray-400">
+                    Estrada Lambari, 1980<br />Primeiro, Piraí - RJ<br />27175-000
+                  </p>
                 </div>
               </div>
             </div>
-
-            {/* Image */}
-            
           </div>
 
           {/* Right Column - Form */}
